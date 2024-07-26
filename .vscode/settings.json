@@ -1,0 +1,6 @@
+{
+    "go.testEnvVars": {
+        "SOME_VAR":"Some value",
+    },
+    "go.testEnvFile": "${workspaceFolder}/settings.test.env"
+}

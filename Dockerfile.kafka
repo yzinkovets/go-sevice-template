@@ -1,0 +1,13 @@
+FROM golang:1.22.5-alpine as builder
+LABEL stage=gobuilder
+RUN apk add build-base
+WORKDIR /app
+COPY . .
+RUN CGO_ENABLED=1 go build -tags musl -o main .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /app
+COPY --from=builder /app/main .
+EXPOSE 8888
+CMD ["./main"]
