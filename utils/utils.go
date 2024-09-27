@@ -100,3 +100,18 @@ func TryGetNullDateTime(stringDateTime string) (null.Time, error) {
 
 	return null.TimeFrom(t), nil
 }
+
+// CleanHostName:
+// removes leading and trailing whitespaces from the hostname
+// in case the hostname == "*", it returns an empty
+func CleanHostname(hostname string) null.String {
+	h := strings.TrimSpace(hostname)
+	if h == "*" || h == "" {
+		return null.String{}
+	}
+	return null.StringFrom(h)
+}
+
+func CleanFingerprint(fp string) string {
+	return strings.Trim(fp, "\f\t\r\n ")
+}

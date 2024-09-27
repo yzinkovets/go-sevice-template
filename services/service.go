@@ -35,7 +35,12 @@ func (s *SomeService) dbCall() error {
 		CONSTRAINT service_mac UNIQUE (mac)
 	);
 	`
-	if _, err := s.db.Db.Exec(query); err != nil {
+	db, err := s.db.Conn()
+	if err != nil {
+		return fmt.Errorf("can't get connection: %w", err)
+	}
+
+	if _, err := db.Query(context.Background(), query); err != nil {
 		return fmt.Errorf("can't create service table: %w", err)
 	}
 
@@ -47,9 +52,14 @@ func (s *SomeService) dbSelect(mac string) (string, error) {
 
 	name := ""
 
-	row := s.db.Db.QueryRow(query, mac)
-	if err := row.Scan(&name); err != nil {
-		return "", err
+	db, err := s.db.Conn()
+	if err != nil {
+		return "", fmt.Errorf("can't get connection: %w", err)
+	}
+
+	r := db.QueryRow(context.Background(), query, mac)
+	if err := r.Scan(&name); err != nil {
+		return "", fmt.Errorf("can't execute query: %w", err)
 	}
 
 	return name, nil
@@ -61,6 +71,12 @@ func (s *SomeService) dbInsert(mac, name string) error {
 
 	query := "INSERT INTO public.service (mac, name) VALUES ($1, $2)"
 
-	_, err := s.db.Db.ExecContext(ctx, query, mac, name)
+	db, err := s.db.Conn()
+	if err != nil {
+		return fmt.Errorf("can't get connection: %w", err)
+	}
+
+	_, err = db.Exec(ctx, query, mac, name)
+
 	return err
 }

@@ -16,6 +16,26 @@ type DbConfig struct {
 	InsertTimeoutSec int    `env:"DB_INSERT_TIMEOUT_SEC" envDefault:"60"`
 }
 
+type KafkaConfig struct {
+	Host            string `env:"KAFKA_HOST"`
+	ClientId        string `env:"KAFKA_CLIENT_ID"`
+	Topic           string `env:"KAFKA_TOPIC"`
+	AutoOffsetReset string `env:"KAFKA_AUTO_OFFSET_RESET" envDefault:"latest"`
+}
+
+type MqttConfig struct {
+	Host                string `env:"MQTT_HOST,required"`
+	Username            string `env:"MQTT_USERNAME"`
+	Password            string `env:"MQTT_PASSWORD"`
+	CertPath            string `env:"MQTT_CERT_PATH"`
+	ClientId            string `env:"MQTT_CLIENT_ID" envDefault:"go_iot_network_topology"`
+	TopicSend           string `env:"MQTT_TOPIC_SEND"`
+	TopicReceive        string `env:"MQTT_TOPIC_RECEIVE"`
+	Qos                 byte   `env:"MQTT_QOS" envDefault:"0"`
+	KeepAliveTimeoutSec int    `env:"MQTT_KEEP_ALIVE_TIMEOUT_SEC" envDefault:"60"`
+	PingTimeoutSec      int    `env:"MQTT_PING_TIMEOUT_SEC" envDefault:"5"`
+}
+
 type JwtAuthConfig struct {
 	JwksFilePath          string `env:"APP_JWKS_FILE,required"`
 	JwtCheckUrl           string `env:"APP_JWT_CHECK_URL,required"`
@@ -35,5 +55,7 @@ type ServerConfig struct {
 type MainConfig struct {
 	AppConfig
 	DbConfig
+	KafkaConfig
+	MqttConfig
 	ServerConfig
 }

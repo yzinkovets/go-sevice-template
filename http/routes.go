@@ -5,6 +5,7 @@ import (
 	"go-service-template/http/handlers"
 	"go-service-template/http/middleware"
 
+	"github.com/gofiber/fiber/v3"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,7 +17,13 @@ func (s *Server) SetupRoutes(authConfig *config.JwtAuthConfig) error {
 		return err
 	}
 
-	// apiNoAuth := s.app.Group("/api/v1")
+	// health check
+	s.app.Get("/health", func(c fiber.Ctx) error {
+		return c.SendString("OK")
+	})
+
+	apiNoAuth := s.app.Group("/api/v1")
+	apiNoAuth.Get("/some", handlers.HandleSomeServiceCall(s.someService)).Name("Get something")
 
 	// handlers that require authentication
 	apiAuth := s.app.Group("/api/v1", auth.Handle)

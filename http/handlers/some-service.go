@@ -3,14 +3,14 @@ package handlers
 import (
 	"fmt"
 	"go-service-template/services"
+	"go-service-template/utils/validate"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 )
 
 type Request struct {
 	Mac    string `json:"mac" validate:"mac,required"`
-	GwUUID string `json:"gw_uuid" validate:"uuid,required"`
+	GwUUID string `json:"gw_uuid" validate:"gw_uuid,required"`
 }
 
 type Response struct {
@@ -26,7 +26,7 @@ func HandleSomeServiceCall(service *services.SomeService) func(fiber.Ctx) error 
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": fmt.Sprintf("invalid json body. Error: %s", err)})
 		}
 
-		if err := validator.New().Struct(r); err != nil {
+		if err := validate.Struct(r); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": fmt.Sprintf("request is not valid. Error: %s", err)})
 		}
 
